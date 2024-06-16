@@ -36,6 +36,14 @@ public class LogicServlet extends HttpServlet {
             if (checkWin(resp, currentSession, currentField)) {
                 return;
             }
+        }else{
+            currentSession.setAttribute("draw", true);
+
+            List<Sign> data = currentField.getFieldData();
+            currentSession.setAttribute("data", data);
+
+            resp.sendRedirect("/index.jsp");
+            return;
         }
 
         List<Sign> data = currentField.getFieldData();

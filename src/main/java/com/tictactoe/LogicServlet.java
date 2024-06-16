@@ -26,11 +26,16 @@ public class LogicServlet extends HttpServlet {
             return;
         }
         currentField.getField().put(index, Sign.CROSS);
+        if (checkWin(resp, currentSession, currentField)) {
+            return;
+        }
 
         int emptyFieldIndex = currentField.getEmptyFieldIndex();
-
         if (emptyFieldIndex >= 0) {
             currentField.getField().put(emptyFieldIndex, Sign.NOUGHT);
+            if (checkWin(resp, currentSession, currentField)) {
+                return;
+            }
         }
 
         List<Sign> data = currentField.getFieldData();

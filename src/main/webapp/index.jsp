@@ -1,6 +1,5 @@
 <%@ page import="com.tictactoe.Sign" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,6 +30,7 @@
 </table>
 
 <hr>
+
 <c:set var="CROSSES" value="<%=Sign.CROSS%>"/>
 <c:set var="NOUGHTS" value="<%=Sign.NOUGHT%>"/>
 

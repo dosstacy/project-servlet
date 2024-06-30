@@ -11,16 +11,16 @@ import java.io.IOException;
 
 @WebServlet(name = "RestartServlet", value = "/restart")
 public class RestartServlet extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger(RestartServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(RestartServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        logger.info("Invalidating session and redirecting to /start");
+        LOGGER.info("Invalidating session and redirecting to /start");
         try {
             req.getSession().invalidate();
             resp.sendRedirect("/start");
         }catch (IOException e){
-            logger.error("IOException occurred while redirecting to /start", e);
+            LOGGER.error("IOException occurred while redirecting to /start", e);
             throw e;
         }
     }

@@ -1,5 +1,8 @@
 package com.tictactoe;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,8 +15,10 @@ import java.util.List;
 
 @WebServlet(name = "LogicServlet", value = "/logic")
 public class LogicServlet extends HttpServlet {
+    private static final Logger LOGGER = LogManager.getLogger(LogicServlet.class);
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        LOGGER.info("LogicServlet doGet");
         HttpSession currentSession = req.getSession();
         Field currentField = extractField(currentSession);
 
@@ -22,27 +27,48 @@ public class LogicServlet extends HttpServlet {
 
         if (Sign.EMPTY != currentSign) {
             RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-            dispatcher.forward(req, resp);
+            try {
+                dispatcher.forward(req, resp);
+            }catch (ServletException | IOException e) {
+                LOGGER.error("An exception occurred while forwarding to /index.jsp", e);
+                throw e;
+            }
             return;
         }
         currentField.getField().put(index, Sign.CROSS);
-        if (checkWin(resp, currentSession, currentField)) {
-            return;
+        LOGGER.debug("Field updated successfully: {}", currentField.getField());
+        try {
+            if (checkWin(resp, currentSession, currentField)) {
+                return;
+            }
+        }catch (IOException e) {
+            LOGGER.error("An exception occurred while checking winner (cross)", e);
+            throw e;
         }
 
         int emptyFieldIndex = currentField.getEmptyFieldIndex();
         if (emptyFieldIndex >= 0) {
             currentField.getField().put(emptyFieldIndex, Sign.NOUGHT);
-            if (checkWin(resp, currentSession, currentField)) {
-                return;
+            LOGGER.debug("Field updated successfully: {}", currentField.getField());
+            try {
+                if (checkWin(resp, currentSession, currentField)) {
+                    return;
+                }
+            }catch (IOException e) {
+                LOGGER.error("An exception occurred while checking winner (nought)", e);
+                throw e;
             }
         }else{
             currentSession.setAttribute("draw", true);
 
             List<Sign> data = currentField.getFieldData();
             currentSession.setAttribute("data", data);
-
-            resp.sendRedirect("/index.jsp");
+            try {
+                resp.sendRedirect("/index.jsp");
+            }catch (IOException e) {
+                LOGGER.error("An exception occurred while redirecting to /index.jsp", e);
+                throw e;
+            }
             return;
         }
 
@@ -51,21 +77,30 @@ public class LogicServlet extends HttpServlet {
         currentSession.setAttribute("data", data);
         currentSession.setAttribute("field", currentField);
 
-        resp.sendRedirect("/index.jsp");
+        try {
+            resp.sendRedirect("/index.jsp");
+        }catch (IOException e) {
+            LOGGER.error("An exception occurred while redirecting to /index.jsp", e);
+            throw e;
+        }
     }
 
     private int getSelectedIndex(HttpServletRequest request) {
+        LOGGER.info("Getting 'click' parameter from request");
         String click = request.getParameter("click");
         if (click != null && click.matches("\\d+")) {
             return Integer.parseInt(click);
         } else {
+            LOGGER.warn("'click' parameter is not a valid number: {}", click);
             return 0;
         }
     }
 
     private Field extractField(HttpSession session) {
         Object field = session.getAttribute("field");
+        LOGGER.info("Extracting 'field' attribute from session");
         if(Field.class != field.getClass()) {
+            LOGGER.error("Session contains an invalid 'field' attribute: {}", field.getClass());
             session.invalidate();
             throw new RuntimeException("Session is broken, try one more time");
         }
@@ -81,7 +116,12 @@ public class LogicServlet extends HttpServlet {
 
             currentSession.setAttribute("data", data);
 
-            response.sendRedirect("/index.jsp");
+            try {
+                response.sendRedirect("/index.jsp");
+            }catch (IOException e){
+                LOGGER.error("IOException occurred while redirecting to /index.jsp", e);
+                throw e;
+            }
             return true;
         }
         return false;

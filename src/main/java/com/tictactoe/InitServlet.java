@@ -18,7 +18,7 @@ public class InitServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LOGGER.info("Handling GET request for /start");
-        HttpSession currentSession = req.getSession(true); //існує - поверне поточну сесію; не існує - створить нову
+        HttpSession currentSession = req.getSession(true); 
 
         Field field = new Field();
         List<Sign> data = field.getFieldData();
@@ -29,10 +29,8 @@ public class InitServlet extends HttpServlet {
         LOGGER.info("Forwarding request to /index.jsp");
         try {
             getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
-            //запит і відповідь будуть надсилатися на index.jsp
         }catch (ServletException | IOException e) {
             LOGGER.error("An exception occurred while forwarding request to /index.jsp", e);
-            throw e;
         }
     }
 }

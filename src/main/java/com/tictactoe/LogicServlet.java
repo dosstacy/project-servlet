@@ -31,7 +31,6 @@ public class LogicServlet extends HttpServlet {
                 dispatcher.forward(req, resp);
             }catch (ServletException | IOException e) {
                 LOGGER.error("An exception occurred while forwarding to /index.jsp", e);
-                throw e;
             }
             return;
         }
@@ -43,7 +42,6 @@ public class LogicServlet extends HttpServlet {
             }
         }catch (IOException e) {
             LOGGER.error("An exception occurred while checking winner (cross)", e);
-            throw e;
         }
 
         int emptyFieldIndex = currentField.getEmptyFieldIndex();
@@ -56,7 +54,6 @@ public class LogicServlet extends HttpServlet {
                 }
             }catch (IOException e) {
                 LOGGER.error("An exception occurred while checking winner (nought)", e);
-                throw e;
             }
         }else{
             currentSession.setAttribute("draw", true);
@@ -67,7 +64,6 @@ public class LogicServlet extends HttpServlet {
                 resp.sendRedirect("/index.jsp");
             }catch (IOException e) {
                 LOGGER.error("An exception occurred while redirecting to /index.jsp", e);
-                throw e;
             }
             return;
         }
@@ -81,7 +77,6 @@ public class LogicServlet extends HttpServlet {
             resp.sendRedirect("/index.jsp");
         }catch (IOException e) {
             LOGGER.error("An exception occurred while redirecting to /index.jsp", e);
-            throw e;
         }
     }
 
@@ -120,7 +115,6 @@ public class LogicServlet extends HttpServlet {
                 response.sendRedirect("/index.jsp");
             }catch (IOException e){
                 LOGGER.error("IOException occurred while redirecting to /index.jsp", e);
-                throw e;
             }
             return true;
         }

@@ -21,7 +21,6 @@ public class RestartServlet extends HttpServlet {
             resp.sendRedirect("/start");
         }catch (IOException e){
             LOGGER.error("IOException occurred while redirecting to /start", e);
-            throw e;
         }
     }
 }
